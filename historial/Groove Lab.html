@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Groove Lab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<style>
+:root{--bg:#eaf0fa;--bg2:#dde7f6;--pn:#fff;--ln:#b9c9e6;--tx:#0d1f40;--mu:#566a93;--ac:#0a86c8;--gr:#2f9a52;--rd:#c05555;--vi:#6a64c4;--or:#d9762a;--cell:#cfdaee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#07122b;--bg2:#0b1b3d;--pn:#10264f;--ln:#1e3a6e;--tx:#e8f0ff;--mu:#8fa6d0;--ac:#19a7ee;--gr:#4fb06a;--rd:#c96b6b;--vi:#8c86d9;--or:#f08a3c;--cell:#16305c}}
+:root[data-theme="dark"]{--bg:#07122b;--bg2:#0b1b3d;--pn:#10264f;--ln:#1e3a6e;--tx:#e8f0ff;--mu:#8fa6d0;--ac:#19a7ee;--gr:#4fb06a;--rd:#c96b6b;--vi:#8c86d9;--or:#f08a3c;--cell:#16305c}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 "Trebuchet MS","Segoe UI",system-ui,sans-serif;min-height:100vh}
+button,select,input{font:inherit;color:var(--tx)}
+button{background:var(--pn);border:1.5px solid var(--ln);border-radius:20px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--ac)}button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+select,input[type=text],input[type=number]{background:var(--pn);border:1.5px solid var(--ln);border-radius:16px;padding:5px 10px}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 18px;background:var(--bg2);border-bottom:1px solid var(--ln)}
+.logo{font:300 30px/1 "Trebuchet MS",sans-serif;letter-spacing:-1px}.logo b{font-weight:700;color:var(--ac)}
+.meta{color:var(--mu);font-size:13px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav button{border-radius:6px;border-color:transparent;background:transparent;color:var(--mu)}
+nav button.on{background:var(--pn);color:var(--ac);border-color:var(--ac)}
+.tp{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 18px}
+.rb{width:46px;height:46px;border-radius:50%;padding:0;font-size:18px;display:grid;place-items:center}
+#bPlay{border-color:var(--ac);color:var(--ac);width:54px;height:54px}
+.pill{display:flex;align-items:center;gap:8px;border:1.5px solid var(--ln);border-radius:26px;padding:4px 12px;background:var(--pn)}
+.pill small{color:var(--ac);font-weight:700}.pill select,.pill input{border:0;background:transparent;padding:2px}
+#bpm{width:58px}
+main{padding:0 18px 30px}
+h2{font-size:19px;margin:6px 0 4px;font-weight:600}p.sub{color:var(--mu);margin:0 0 12px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px;margin-bottom:14px}
+.sc{overflow-x:auto;border:1px solid var(--ln);border-radius:10px;background:var(--bg2)}
+.grid{position:relative;display:inline-block;min-width:100%}
+.row{display:flex;height:34px;align-items:stretch}.row.l{height:44px}
+.lb{position:sticky;left:0;z-index:3;width:110px;flex:none;background:var(--pn);border-right:1px solid var(--ln);border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:6px;padding:0 8px;font-size:12px}
+.lb button{padding:0 6px;border-radius:5px;font-size:11px}
+.c{width:72px;flex:none;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln);position:relative;text-align:center;color:var(--mu);font-size:11px;line-height:34px;cursor:pointer}
+.c.s0{border-left:2px solid var(--ac)}
+.secb{flex:none;border-right:2px solid var(--bg);color:#fff;padding:6px 8px;font-size:12px;font-weight:600;cursor:pointer;overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--ln)}
+.secb.sel{outline:2px solid var(--tx);outline-offset:-3px}
+.ch{width:72px;flex:none;border:0;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln);background:var(--pn);text-align:center;border-radius:0;font-weight:700;color:var(--ac);padding:0}
+.ch.s0{border-left:2px solid var(--ac)}
+.b i{position:absolute;width:4px;height:5px;border-radius:1px;background:var(--k)}
+#cur{position:absolute;top:0;bottom:0;width:2px;background:var(--or);z-index:4;pointer-events:none;left:110px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chips button{border-radius:6px;padding:4px 10px}
+.gr{display:flex;align-items:center;gap:3px;margin-bottom:3px}.gl{width:84px;flex:none;color:var(--mu);font-size:12px}
+.st{width:34px;height:28px;border-radius:3px;background:var(--cell);cursor:pointer;flex:none}
+.st.q{margin-left:5px}.st.on{background:var(--c)}.st.ph{outline:2px solid var(--or)}
+.pad{overflow-x:auto;padding-bottom:6px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.item{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--ln);flex-wrap:wrap}
+.tag{font-size:11px;padding:1px 8px;border-radius:10px;background:var(--cell);color:var(--mu)}
+.sp{flex:1}
+</style></head><body>
+<header>
+<div class="logo">groove<b>lab</b></div>
+<div class="meta" id="meta"></div>
+<nav id="nav"></nav>
+</header>
+<div class="tp">
+<button class="rb" id="bPlay" onclick="togglePlay()" aria-label="Reproducir">▶</button>
+<button class="rb" onclick="stopAll()" aria-label="Detener">■</button>
+<button class="rb" id="bLoop" onclick="toggleLoop()" title="Repetir la sección seleccionada" aria-label="Repetir sección">⟳</button>
+<button class="rb" id="bMet" onclick="toggleMet()" title="Metrónomo" aria-label="Metrónomo">♩</button>
+<div class="pill"><small>TONALIDAD</small><select id="key" onchange="setKey()"></select><select id="mode" onchange="setKey()"><option value="">Mayor</option><option value="m">Menor</option></select></div>
+<div class="pill"><small>BPM</small><input type="number" id="bpm" min="50" max="220" onchange="setBpm()"></div>
+<div class="pill"><small>COMPÁS</small><select id="ts" onchange="setTs()"><option>4/4</option><option>3/4</option><option>5/4</option><option>6/8</option></select></div>
+<div class="pill"><small>VOL</small><input type="range" id="vol" min="-30" max="0" value="-6" oninput="Tone.Destination.volume.value=+this.value"></div>
+<div class="pill" id="pos">Compás 1</div>
+<div class="sp"></div>
+<div class="pill"><select id="saved" onchange="openProj(this.value)" aria-label="Abrir canción"><option value="">Abrir…</option></select></div>
+<button onclick="saveProj()">Guardar</button><button onclick="newProj()">Nueva</button>
+</div>
+<main id="main"></main>
+<datalist id="dl"></datalist>
+<script>
+const $=s=>document.querySelector(s),W=72,KEYS=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const T=[['drums','Drums','--vi'],['bass','Bass','--rd'],['skank','Guitar Skank','--or'],['organ','Organ Bubble','--ac'],['melody','Melody','--gr']];
+const DR=[['kick','Kick'],['snare','Snare'],['rim','Rimshot'],['hat','Hi-hat'],['ohat','Open hat'],['shaker','Shaker'],['conga','Conga'],['tom','Tom']];
+const mk=(...a)=>{const r=Array(16).fill(0);a.forEach(i=>r[i]=1);return r},mv=o=>{const r=Array(16).fill(0);for(const k in o)r[k]=o[k];return r};
+const H8=[0,2,4,6,8,10,12,14];
+const dp=(o)=>Object.fromEntries(DR.map(([k])=>[k,o[k]||mk()]));
+function defPats(){return{
+drums:{A:dp({kick:mk(0,8),snare:mk(4,12),hat:mk(...H8)}),B:dp({kick:mk(0,6,8),snare:mk(4,12),hat:mk(...H8),ohat:mk(14),shaker:mk(1,3,5,7,9,11,13,15)}),C:dp({kick:mk(8),rim:mk(8),hat:mk(...H8),conga:mk(3,6,11)}),D:dp({kick:mk(0,8),snare:mk(8,10,12,13,14,15),hat:mk(0,4,8),tom:mk(12,14)})},
+bass:{A:mv({0:1,6:1,8:2,10:1}),B:mv({0:1,3:1,6:2,8:1,12:3}),C:mv({0:1,8:1}),D:mv({0:1,4:4,8:2,12:3})},
+skank:{A:mk(4,12),B:mk(2,6,10,14),C:mk(4,6,12,14),D:mk(6,14)},
+organ:{A:mk(0,3,6,8,11,14),B:mk(...H8),C:mk(3,7,11,15),D:mk(0,3,4,7,8,11,12,15)},
+melody:{A:mv({0:1,3:3,5:5,8:3,11:2,13:1}),B:mv({0:1,2:2,4:3,6:4,8:5,10:6,12:7,14:8}),C:mv({0:8,2:7,4:6,6:5,8:4,10:3,12:2,14:1}),D:mv({0:1,3:5,6:8,8:5,11:3,14:1})}}}
+const mkS=(n,b,c,ch,p={})=>({n,b,c,ch:Array.from({length:b},(_,i)=>ch[i%ch.length]),p:{drums:'A',bass:'A',skank:'A',organ:'A',melody:'A',...p}});
+function defS(){const V=['F#m','C#m','D','E'],C=['A','E','F#m','D'],cc={drums:'B',bass:'B',skank:'B',organ:'B',melody:'B'};return{name:'Mi canción',bpm:124,key:6,mode:'m',ts:'4/4',sel:1,
+secs:[mkS('Intro',4,'#6f7fd6',V,{drums:'C',melody:'C'}),mkS('Verso A',8,'#2f95b8',V),mkS('Pre-coro',4,'#c9962f',['D','E'],{drums:'D',bass:'B'}),mkS('Coro',8,'#b95a3a',C,cc),mkS('Verso B',8,'#2f95b8',V,{bass:'C'}),mkS('Coro final',8,'#b95a3a',C,{...cc,bass:'D',organ:'D',melody:'D'}),mkS('Outro',4,'#6f7fd6',V,{drums:'C'})],
+pats:defPats(),snd:{bass:'saw',skank:'guitar',organ:'organ',melody:'lead'},mute:{}}}
+let S=defS(),view='vis',P={step:0,playing:false,loop:false,solo:null,met:false},LIB=[],SMP={};
+const SPBM={'4/4':16,'3/4':12,'5/4':20,'6/8':12},SPB=()=>SPBM[S.ts],total=()=>S.secs.reduce((a,s)=>a+s.b,0);
+const pat=(t,v)=>S.pats[t][v],cur=t=>pat(t,S.secs[S.sel].p[t]);
+const kn=()=>KEYS[S.key]+S.mode;
+function info(bar){let a=0;for(let i=0;i<S.secs.length;i++){const s=S.secs[i];if(bar<a+s.b)return{i,s,l:bar-a};a+=s.b}return null}
+const secStart=i=>S.secs.slice(0,i).reduce((a,s)=>a+s.b,0);
+function chord(s){const m=(s||'').match(/^([A-G])([#b]?)(.*)$/);if(!m)return null;let r=({C:0,D:2,E:4,F:5,G:7,A:9,B:11})[m[1]];if(m[2]=='#')r++;if(m[2]=='b')r--;r=(r+12)%12;const q=m[3];let iv=[0,4,7];if(/^m(?!aj)/.test(q))iv=[0,3,7];if(q.startsWith('dim'))iv=[0,3,6];if(q.includes('sus2'))iv=[0,2,7];if(q.includes('sus4'))iv=[0,5,7];if(/7/.test(q))iv=iv.concat(/maj7/.test(q)?11:10);return{r,iv}}
+const hz=m=>Tone.Frequency(m,'midi').toFrequency();
+const SC={'':[0,2,4,5,7,9,11],m:[0,2,3,5,7,8,10]};
+function diat(){const q=S.mode?['m','dim','','m','m','','']:['','m','m','','','m','dim'];return SC[S.mode].map((s,i)=>KEYS[(S.key+s)%12]+q[i])}
+/* ---------- AUDIO ---------- */
+let V=null;
+function audio(){if(V)return;const n=(t,d,f,fq)=>{const x=new Tone.NoiseSynth({noise:{type:t},envelope:{attack:.001,decay:d,sustain:0}});const fl=new Tone.Filter(fq,f).toDestination();x.connect(fl);return x};
+const mem=(o,e)=>new Tone.MembraneSynth({pitchDecay:o[0],octaves:o[1],envelope:{attack:.001,decay:e,sustain:0,release:.05}}).toDestination();
+const poly=(c,o)=>new Tone.PolySynth(c,o).toDestination();
+V={kick:mem([.05,6],.35),snare:n('white',.16,'highpass',1200),rim:mem([.005,2],.05),hat:n('white',.04,'highpass',7500),ohat:n('white',.28,'highpass',7000),shaker:n('pink',.07,'bandpass',5000),conga:mem([.02,3],.16),tom:mem([.04,4],.3),
+bass:new Tone.MonoSynth({oscillator:{type:'sawtooth'},filter:{Q:2,type:'lowpass',rolloff:-24},envelope:{attack:.01,decay:.2,sustain:.5,release:.1},filterEnvelope:{attack:.01,decay:.2,sustain:.3,baseFrequency:120,octaves:2.5}}).toDestination(),
+guitar:poly(Tone.Synth,{oscillator:{type:'triangle'},envelope:{attack:.001,decay:.12,sustain:0,release:.05}}),
+organ:poly(Tone.Synth,{oscillator:{type:'square'},envelope:{attack:.005,decay:.1,sustain:.5,release:.06}}),
+rhodes:poly(Tone.FMSynth,{harmonicity:3.01,modulationIndex:1.5,envelope:{attack:.01,decay:1,sustain:.2,release:1},modulationEnvelope:{attack:.01,decay:.5,sustain:0,release:.5}}),
+lead:new Tone.Synth({oscillator:{type:'triangle'},envelope:{attack:.01,decay:.2,sustain:.4,release:.2}}).toDestination(),
+click:new Tone.MembraneSynth({envelope:{attack:.001,decay:.03,sustain:0}}).toDestination()};
+V.kick.volume.value=-2;V.snare.volume.value=-10;V.rim.volume.value=-12;V.hat.volume.value=-18;V.ohat.volume.value=-18;V.shaker.volume.value=-16;V.conga.volume.value=-8;V.tom.volume.value=-8;V.bass.volume.value=-8;V.guitar.volume.value=-14;V.organ.volume.value=-20;V.rhodes.volume.value=-14;V.lead.volume.value=-10;V.click.volume.value=-14;V.snare.connect&&0;
+Tone.Transport.scheduleRepeat(tick,'16n')}
+const NT={kick:['C1','8n'],rim:['E5','32n'],conga:['A3','16n'],tom:['D2','8n']};
+function hit(k,t,v=1){if(SMP[k]){SMP[k].start(t);return}const x=V[k];if(NT[k])x.triggerAttackRelease(NT[k][0],NT[k][1],t,v);else x.triggerAttackRelease('16n',t,v)}
+function tick(time){const spb=SPB();if(P.loop){const a=secStart(S.sel)*spb,b=a+S.secs[S.sel].b*spb;if(P.step<a||P.step>=b)P.step=a}
+if(P.step>=total()*spb)P.step=0;const st=P.step,bar=st/spb|0,si=st%spb,k=si%16,o=info(bar),ok=t=>!S.mute[t]&&(!P.solo||P.solo==t);
+if(P.met&&si%4==0)V.click.triggerAttackRelease(si==0?'C5':'G4','32n',time);
+const p=o.s.p,c=chord(o.s.ch[o.l]);
+if(ok('drums')){const d=pat('drums',p.drums);DR.forEach(([r])=>{if(d[r][k])hit(r,time,r=='kick'?1:.8)})}
+if(c){const b=pat('bass',p.bass)[k];if(ok('bass')&&b){const m={1:0,2:7,3:12,4:c.iv[1]}[b];V.bass.triggerAttackRelease(hz(28+c.r+m),'8n',time)}
+const ch=(t,base,dur)=>{if(ok(t)&&pat(t,p[t])[k])V[S.snd[t]=='rhodes'?'rhodes':t=='skank'?'guitar':'organ'].triggerAttackRelease(c.iv.map(i=>hz(base+c.r+i)),dur,time)};ch('skank',54,'16n');ch('organ',52,'16n')}
+const m=pat('melody',p.melody)[k];if(ok('melody')&&m){const s=SC[S.mode],d=m-1;V[S.snd.melody=='rhodes'?'rhodes':S.snd.melody=='organ'?'organ':'lead'].triggerAttackRelease(hz(60+S.key+s[d%7]+(d>=7?12:0)),'8n',time)}
+P.step++;Tone.Draw.schedule(()=>cursor(st),time)}
+function cursor(st){const spb=SPB(),pos=st/spb,c=$('#cur');if(c){const x=110+pos*W,sc=$('#sc');c.style.left=x+'px';if(P.playing&&sc&&(x<sc.scrollLeft+130||x>sc.scrollLeft+sc.clientWidth-60))sc.scrollLeft=x-200}
+document.querySelectorAll('.st.ph').forEach(e=>e.classList.remove('ph'));document.querySelectorAll('.st[data-i="'+(st%spb%16)+'"]').forEach(e=>e.classList.add('ph'));
+const o=info(Math.min(total()-1,pos|0));$('#pos').textContent='Compás '+((pos|0)+1)+(o?' · '+o.s.n:'')}
+async function play(){await Tone.start();audio();Tone.Transport.bpm.value=S.bpm;Tone.Transport.start();P.playing=true;$('#bPlay').textContent='❚❚'}
+function togglePlay(){if(P.playing){Tone.Transport.pause();P.playing=false;$('#bPlay').textContent='▶'}else{P.solo=null;play()}}
+function stopAll(){if(V){Tone.Transport.stop()}P.playing=false;P.solo=null;P.step=0;$('#bPlay').textContent='▶';cursor(0)}
+function toggleLoop(){P.loop=!P.loop;$('#bLoop').classList.toggle('on',P.loop)}
+function toggleMet(){P.met=!P.met;$('#bMet').classList.toggle('on',P.met)}
+function seek(b){P.step=b*SPB();cursor(P.step)}
+function preview(t){P.solo=t;P.loop=true;$('#bLoop').classList.add('on');P.step=secStart(S.sel)*SPB();play()}
+function setBpm(){S.bpm=Math.max(50,Math.min(220,+$('#bpm').value||120));if(V)Tone.Transport.bpm.value=S.bpm;head()}
+function setKey(){S.key=+$('#key').value;S.mode=$('#mode').value;head();render()}
+function setTs(){S.ts=$('#ts').value;if(V)Tone.Transport.timeSignature=S.ts=='6/8'?[6,8]:+S.ts[0];P.step=0;head();render()}
+function head(){$('#meta').textContent=S.name+' · '+S.bpm+' BPM · '+kn()+' · '+S.ts}
+/* ---------- VIEWS ---------- */
+const NAV=[['vis','Song Visualizer'],['drums','Drum Studio'],['bass','Bass Studio'],['inst','Instrument Studio'],['mel','Melody & Hook'],['lib','Sound Library']];
+function render(){$('#nav').innerHTML=NAV.map(([k,n])=>`<button class="${view==k?'on':''}" onclick="go('${k}')">${n}</button>`).join('');
+$('#dl').innerHTML=diat().map(c=>`<option value="${c}">`).join('');
+$('#main').innerHTML=({vis:vVis,drums:vDrums,bass:vBass,inst:vInst,mel:vMel,lib:vLib})[view]();cursor(P.step)}
+const go=v=>{view=v;render()};
+const cell=(on,i,fn,col)=>`<div class="st${on?' on':''}${i%4==0?' q':''}" data-i="${i}" style="--c:var(${col})" onclick="${fn}"></div>`;
+const grow=(l,h)=>`<div class="gr"><span class="gl">${l}</span>${h}</div>`;
+function secChips(){return `<div class="chips">${S.secs.map((s,i)=>`<button class="${i==S.sel?'on':''}" onclick="S.sel=${i};render()">${s.n}</button>`).join('')}</div>`}
+function varBar(t){const v=S.secs[S.sel].p[t];return `<div class="card"><b>Sección:</b>${secChips()}<div class="chips"><b style="align-self:center">Variación</b>${'ABCD'.split('').map(x=>`<button class="${v==x?'on':''}" onclick="setVar('${t}','${x}')">${x}</button>`).join('')}<span class="sp"></span><button onclick="allVar('${t}')">Aplicar a todas las secciones</button><button onclick="preview('${t}')">▶ Preescuchar sección</button></div><span class="meta">Editas la variación ${v} de «${S.secs[S.sel].n}». Los cambios se escuchan al instante.</span></div>`}
+const setVar=(t,x)=>{S.secs[S.sel].p[t]=x;render()},allVar=t=>{const x=S.secs[S.sel].p[t];S.secs.forEach(s=>s.p[t]=x);render()};
+function vVis(){const tot=total(),spb=SPB();let ruler='',secs='',chs='',lanes='';
+for(let b=0;b<tot;b++){const o=info(b),f=o.l==0?' s0':'';ruler+=`<div class="c${f}" onclick="seek(${b})">${b+1}</div>`;chs+=`<input class="ch${f}" value="${o.s.ch[o.l]}" list="dl" onchange="setCh(${o.i},${o.l},this.value)" aria-label="Acorde compás ${b+1}">`}
+secs=S.secs.map((s,i)=>`<div class="secb${i==S.sel?' sel':''}" style="width:${s.b*W}px;background:${s.c}" onclick="S.sel=${i};render()">${s.n} · ${s.b}</div>`).join('');
+for(const [t,n,col] of T){let cs='';for(let b=0;b<tot;b++){const o=info(b),p=pat(t,o.s.p[t]);let d='';for(let k=0;k<16;k++){let on=t=='drums'?DR.some(([r])=>p[r][k]):p[k],h=t=='bass'?{1:10,2:40,3:80,4:25}[p[k]]:t=='melody'?p[k]*10:50;if(on)d+=`<i style="left:${k*100/16}%;bottom:${t=='drums'||t=='skank'||t=='organ'?'35%':h+'%'}"></i>`}
+cs+=`<div class="c b${o.l==0?' s0':''}" style="--k:var(${col})">${d}</div>`}
+lanes+=`<div class="row l"><div class="lb"><span style="width:8px;height:8px;border-radius:50%;background:var(${col})"></span>${n}<button class="${S.mute[t]?'on':''}" onclick="S.mute['${t}']=!S.mute['${t}'];render()">M</button></div>${cs}</div>`}
+const s=S.secs[S.sel];
+return `<h2>Song Visualizer</h2><p class="sub">Vista general: estructura, acordes y pistas sincronizadas. Toca un número de compás para empezar desde ahí.</p>
+<div class="sc" id="sc"><div class="grid" style="width:${110+tot*W}px"><div id="cur"></div>
+<div class="row"><div class="lb">Compás</div>${ruler}</div><div class="row l"><div class="lb">Estructura</div>${secs}</div><div class="row l"><div class="lb">Acordes</div>${chs}</div>${lanes}</div></div>
+<div class="card" style="margin-top:14px"><b>Sección seleccionada</b><div class="chips" style="align-items:center"><input type="text" value="${s.n}" onchange="S.secs[S.sel].n=this.value;render()" style="width:140px" aria-label="Nombre de sección">
+<button onclick="chB(-1)">− compás</button><span>${s.b} compases</span><button onclick="chB(1)">+ compás</button><button onclick="dup()">Duplicar</button><button onclick="mv2(-1)">← Mover</button><button onclick="mv2(1)">Mover →</button><button onclick="del()">Eliminar</button><input type="color" value="${s.c}" onchange="S.secs[S.sel].c=this.value;render()" aria-label="Color"></div>
+<div class="chips"><b style="align-self:center">Añadir:</b>${['Intro','Verso','Pre-coro','Coro','Puente','Outro'].map(n=>`<button onclick="addS('${n}')">${n}</button>`).join('')}</div></div>`}
+function setCh(i,l,v){S.secs[i].ch[l]=v.trim()}
+function chB(d){const s=S.secs[S.sel];if(d>0){s.b++;s.ch.push(s.ch[s.ch.length-1])}else if(s.b>1){s.b--;s.ch.pop()}render()}
+function dup(){const s=JSON.parse(JSON.stringify(S.secs[S.sel]));S.secs.splice(S.sel+1,0,s);S.sel++;render()}
+function mv2(d){const j=S.sel+d;if(j<0||j>=S.secs.length)return;[S.secs[S.sel],S.secs[j]]=[S.secs[j],S.secs[S.sel]];S.sel=j;render()}
+function del(){if(S.secs.length<2)return;S.secs.splice(S.sel,1);S.sel=Math.max(0,S.sel-1);render()}
+function addS(n){const d=diat(),pr=[d[0],d[4],d[5],d[3]];S.secs.splice(S.sel+1,0,mkS(n,4,'#7a8fb8',pr));S.sel++;render()}
+function vDrums(){const p=cur('drums');return `<h2>Drum Studio</h2><p class="sub">Batería y percusión: elige variación, dibuja el patrón y asígnalo a la sección.</p>${varBar('drums')}<div class="card pad">${DR.map(([r,n])=>grow(n+(SMP[r]?' ◉':''),p[r].map((x,i)=>cell(x,i,`tgD('${r}',${i})`,'--vi')).join(''))).join('')}<div class="chips"><button onclick="clr('drums')">Limpiar variación</button><button onclick="fill()">Fill aleatorio</button></div></div>`}
+function tgD(r,i){const p=cur('drums');p[r][i]=p[r][i]?0:1;if(p[r][i]&&V)hit(r,Tone.now());render()}
+function fill(){const p=cur('drums');['snare','tom','conga'].forEach(r=>{for(let i=8;i<16;i++)p[r][i]=0});for(let i=10;i<16;i++)p[Math.random()<.5?'snare':'tom'][i]=1;render()}
+function clr(t){const p=cur(t);if(t=='drums')DR.forEach(([r])=>p[r].fill(0));else p.fill(0);render()}
+function roll(t,rows,col){const p=cur(t);return rows.map(([l,v])=>grow(l,p.map((x,i)=>cell(x==v,i,`tgR('${t}',${i},${v})`,col)).join(''))).join('')}
+function tgR(t,i,v){const p=cur(t);p[i]=p[i]==v?0:v;render()}
+function vBass(){return `<h2>Bass Studio</h2><p class="sub">Cada nota sigue el acorde del compás: fundamental, tercera, quinta u octava.</p>${varBar('bass')}<div class="card pad">${roll('bass',[['Octava',3],['Quinta',2],['Tercera',4],['Fundamental',1]],'--rd')}<div class="chips"><button onclick="clr('bass')">Limpiar</button><button onclick="rnd('bass')">Variación aleatoria</button></div></div>`}
+function rnd(t){const p=cur(t);for(let i=0;i<16;i++)p[i]=(i%4==0||Math.random()<.25)?[1,1,2,3,4][Math.random()*5|0]:0;render()}
+function vInst(){const one=(t,n,opts)=>`<div class="card pad"><b>${n}</b> <select onchange="S.snd['${t}']=this.value;render()">${opts.map(([v,l])=>`<option value="${v}"${S.snd[t]==v?' selected':''}>${l}</option>`).join('')}</select>${grow('Golpes',cur(t).map((x,i)=>cell(x,i,`tgO('${t}',${i})`,t=='skank'?'--or':'--ac')).join(''))}<div class="chips"><button onclick="preview('${t}')">▶ Preescuchar</button><button onclick="clr('${t}')">Limpiar</button></div></div>`;
+return `<h2>Instrument Studio</h2><p class="sub">Guitarra skank y órgano bubble. Rhodes disponible como sonido alterno.</p><div class="card"><b>Sección:</b>${secChips()}</div>
+<b>Guitar Skank · variación ${S.secs[S.sel].p.skank}</b><div class="chips">${'ABCD'.split('').map(x=>`<button class="${S.secs[S.sel].p.skank==x?'on':''}" onclick="setVar('skank','${x}')">${x}</button>`).join('')}</div>${one('skank','Sonido',[['guitar','Guitar Skank'],['rhodes','Rhodes']])}
+<b>Organ Bubble · variación ${S.secs[S.sel].p.organ}</b><div class="chips">${'ABCD'.split('').map(x=>`<button class="${S.secs[S.sel].p.organ==x?'on':''}" onclick="setVar('organ','${x}')">${x}</button>`).join('')}</div>${one('organ','Sonido',[['organ','Organ Bubble'],['rhodes','Rhodes']])}`}
+function tgO(t,i){const p=cur(t);p[i]=p[i]?0:1;render()}
+function vMel(){const rows=[8,7,6,5,4,3,2,1].map(d=>[d==8?'8 (octava)':'Grado '+d,d]);return `<h2>Melody & Hook</h2><p class="sub">Motivos sobre los grados de la escala de ${kn()}. Genera un contorno o dibuja el tuyo.</p>${varBar('melody')}<div class="card pad">${roll('melody',rows,'--gr')}<div class="chips"><button onclick="gen('up')">↗ Ascendente</button><button onclick="gen('down')">↘ Descendente</button><button onclick="gen('leap')">Saltos</button><button onclick="gen('hook')">Hook aleatorio</button><button onclick="clr('melody')">Limpiar</button>
+<select onchange="S.snd.melody=this.value" aria-label="Sonido melodía">${[['lead','Lead'],['rhodes','Rhodes'],['organ','Órgano']].map(([v,l])=>`<option value="${v}"${S.snd.melody==v?' selected':''}>${l}</option>`).join('')}</select></div></div>`}
+function gen(k){const p=cur('melody');p.fill(0);const pos=[0,2,4,6,8,10,12,14];if(k=='up')pos.forEach((x,i)=>p[x]=i+1);if(k=='down')pos.forEach((x,i)=>p[x]=8-i);if(k=='leap')pos.forEach((x,i)=>p[x]=[1,5,3,8,5,2,6,1][i]);
+if(k=='hook'){let d=1+(Math.random()*5|0);[0,3,5,8,11,13].forEach(x=>{d=Math.max(1,Math.min(8,d+[-3,-2,-1,0,1,2,3][Math.random()*7|0]));p[x]=d})}render()}
+const BUILT=[['Kick','Drums','kick'],['Snare','Drums','snare'],['Rimshot','Drums','rim'],['Hi-hat','Drums','hat'],['Shaker','Drums','shaker'],['Conga','Drums','conga'],['Tom','Drums','tom'],['Bass Saw','Bajo','bass:saw'],['Sub Bass','Bajo','bass:sub'],['Guitar Skank','Guitarra','skank:guitar'],['Rhodes (guitarra)','Teclado','skank:rhodes'],['Organ Bubble','Órgano','organ:organ'],['Rhodes (órgano)','Teclado','organ:rhodes'],['Lead','Melodía','melody:lead'],['Rhodes (melodía)','Teclado','melody:rhodes']];
+async function pv(id){await Tone.start();audio();const t=Tone.now()+.02,b=BUILT[id][2];if(!b.includes(':')){hit(b,t);return}const[tr,o]=b.split(':');const c=[0,4,7];
+if(tr=='bass'){V.bass.oscillator.type=o=='sub'?'sine':'sawtooth';V.bass.triggerAttackRelease(hz(34),'4n',t)}else{const ins=o=='rhodes'?'rhodes':tr=='skank'?'guitar':tr=='organ'?'organ':'lead';if(tr=='melody')V[ins].triggerAttackRelease(hz(72),'4n',t);else V[ins].triggerAttackRelease(c.map(i=>hz(60+i)),'4n',t)}}
+function asg(id){const[tr,o]=BUILT[id][2].split(':');S.snd[tr]=o;if(V&&tr=='bass')V.bass.oscillator.type=o=='sub'?'sine':'sawtooth';render()}
+function vLib(){return `<h2>Sound Library</h2><p class="sub">Sonidos propios de Groove Lab y muestras que importes. Preescucha, asigna y el generador lo usa.</p>
+<div class="two"><div class="card"><b>Sonidos de Groove Lab</b>${BUILT.map((b,i)=>{const[tr,o]=b[2].split(':'),act=o&&S.snd[tr]==o;return `<div class="item"><button class="rb" style="width:34px;height:34px;font-size:12px" onclick="pv(${i})" aria-label="Preescuchar ${b[0]}">▶</button><span>${b[0]}</span><span class="tag">${b[1]}</span><span class="sp"></span>${o?`<button class="${act?'on':''}" onclick="asg(${i})">${act?'Asignado':'Asignar'}</button>`:''}</div>`}).join('')}</div>
+<div class="card"><b>Mis muestras (WAV / MP3)</b><div class="chips"><input type="file" accept=".wav,.mp3,audio/*" multiple onchange="imp(this.files)"></div>
+${LIB.length?LIB.map((l,i)=>`<div class="item"><button class="rb" style="width:34px;height:34px;font-size:12px" onclick="LIB[${i}].p.start()" aria-label="Preescuchar">▶</button><span>${l.n}</span><span class="tag">${l.d?l.d.toFixed(2)+' s':'cargando…'}</span><span class="sp"></span><select id="as${i}">${DR.map(([r,n])=>`<option value="${r}">${n}</option>`).join('')}</select><button onclick="asS(${i})">Asignar</button></div>`).join(''):'<p class="sub">Aún no hay muestras. Importa un WAV o MP3 y asígnalo a un instrumento de la batería.</p>'}
+${Object.keys(SMP).length?`<div class="chips">${Object.keys(SMP).map(r=>`<button onclick="delete SMP['${r}'];render()">Quitar muestra de ${r} ✕</button>`).join('')}</div>`:''}
+<p class="sub">Las muestras importadas viven en esta sesión. El guardado de canciones conserva la estructura, acordes, patrones y sonidos elegidos.</p></div></div>`}
+async function imp(fs){await Tone.start();audio();for(const f of fs){const it={n:f.name,d:0};it.p=new Tone.Player(URL.createObjectURL(f),()=>{it.d=it.p.buffer.duration;if(view=='lib')render()}).toDestination();LIB.push(it)}render()}
+function asS(i){SMP[$('#as'+i).value]=LIB[i].p;render()}
+/* ---------- PROYECTOS ---------- */
+function list(){let k=[];try{for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(x.startsWith('gl:'))k.push(x.slice(3))}}catch(e){}$('#saved').innerHTML='<option value="">Abrir…</option>'+k.map(n=>`<option>${n}</option>`).join('')}
+function saveProj(){const n=prompt('Nombre de la canción',S.name);if(!n)return;S.name=n;try{localStorage.setItem('gl:'+n,JSON.stringify(S))}catch(e){alert('No se pudo guardar en este navegador.')}head();list()}
+function openProj(n){if(!n)return;try{S=JSON.parse(localStorage.getItem('gl:'+n));sync();stopAll();render()}catch(e){}$('#saved').value=''}
+function newProj(){S=defS();sync();stopAll();render()}
+function sync(){$('#bpm').value=S.bpm;$('#key').value=S.key;$('#mode').value=S.mode;$('#ts').value=S.ts;head()}
+$('#key').innerHTML=KEYS.map((k,i)=>`<option value="${i}">${k}</option>`).join('');
+sync();list();render();
+</script></body></html>
