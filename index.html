@@ -484,5 +484,32 @@ function vgen(k){const L=evW('voice');L.length=0;L.push(...vbuild(k));EV.sel=nul
 function vVoice(){return `<h2>Voice Studio</h2><p class="sub">Frases vocales y melodías con figuras reales: negras, corcheas, semicorcheas, tresillos, silencios, puntillos y ligaduras.</p>${varBar('voice')}<div class="card"><b>Escala</b> <select onchange="S.scale=this.value;render()" aria-label="Escala">${Object.keys(SCL).map(k=>`<option${S.scale==k?' selected':''}>${k}</option>`).join('')}</select> <span class="meta">${kn()} · ${scl().map((x,i)=>nn(i)).join(' · ')}</span><div class="chips"><b style="align-self:center">Generar:</b>${[['Melodía principal','melodia'],['Llamada','llamada'],['Respuesta','respuesta'],['Coro','coro'],['Hook','hook'],['Frase corta repetitiva','corta'],['Sincopada','sincopada'],['Tresillos','tresillos'],['Nota ligada','ligada']].map(([n,k])=>`<button class="sm" onclick="vgen('${k}')">${n}</button>`).join('')}</div></div>${evCard('voice','voice')}`}
 NAV.push(['chord','Chord Studio'],['voice','Voice Studio']);
 $('#key').innerHTML=KEYS.map((k,i)=>`<option value="${i}">${k}</option>`).join('');
+const KITV=['kick','snare','rim','hat','ohat','shaker','conga','tom'];
+const KITL={kick:'Bombo',snare:'Caja',rim:'Rimshot',hat:'Hi-hat',ohat:'Open hat',shaker:'Shaker',conga:'Conga',tom:'Tom'};
+const KITE={kick:1,snare:1,rim:1,hat:1,ohat:1,shaker:1,conga:1,tom:1};
+function kitVoiceOf(name){const b=name.toLowerCase().replace(/\.[^.]+$/,'');if(KITE[b])return b;
+if(/ohat|open.?hat|hi.?hat.?open/.test(b))return 'ohat';
+if(/kick|bombo/.test(b))return 'kick';
+if(/snare|caja|redoblante/.test(b))return 'snare';
+if(/rim/.test(b))return 'rim';
+if(/tom/.test(b))return 'tom';
+if(/conga|bongo|bop/.test(b))return 'conga';
+if(/shaker|tamb|maraca|guiro|cabasa/.test(b))return 'shaker';
+if(/hi.?hat|hat|charles/.test(b))return 'hat';
+return null}
+function kitStatus(){return KITV.filter(v=>S.assign&&S.assign[v]).length}
+async function loadKit(fs){const all=[...fs];if(!all.length)return;await Tone.start();audio();
+const cand=all.filter(f=>/\.(wav|mp3|ogg|m4a|aac)$/i.test(f.name)).map(f=>({f,v:kitVoiceOf(f.name)})).filter(x=>x.v);
+if(!cand.length){toast('No reconocí sonidos de batería (kick, snare, hat, ohat, rim, shaker, conga, tom)');return}
+const isEx=x=>KITE[x.f.name.toLowerCase().replace(/\.[^.]+$/,'')],used={};
+cand.filter(isEx).concat(cand.filter(x=>!isEx(x))).forEach(x=>{if(!used[x.v])used[x.v]=x.f});
+const list=Object.values(used);toast('Cargando '+list.length+' sonidos del kit...');await imp(list,'Drums');
+Object.entries(used).forEach(([v,f])=>{const it=LIB.find(l=>l.n===f.name);if(it){S.assign[v]=f.name;useS(v,it)}});
+relink();render();toast('Kit realista: '+kitStatus()+'/8 sonidos asignados')}
+function clearKit(){KITV.forEach(v=>{delete SMP[v];if(S.assign)delete S.assign[v]});relink();render();toast('Sintetizadores activados')}
+function previewKit(){if(!kitStatus()){toast('Carga primero un kit realista');return}audio();const t=Tone.now()+.06;KITV.forEach((v,i)=>{if(S.assign&&S.assign[v])hit(v,t+i*.22)})}
+function kitCard(){const st=kitStatus();return `<div class="card" id="kitCard"><b>Kit de batería realista</b> <span class="tag">${st}/8 sonidos</span><p class="sub">Carga la carpeta <b>samples-local</b> o los WAV del kit. Se asignan solos a bombo, caja, rimshot, hi-hats, shaker, conga y tom. El MIDI y los patrones no cambian.</p><div class="chips" style="align-items:center"><label>Carpeta: <input type="file" id="kitDir" webkitdirectory multiple accept=".wav,.mp3,.ogg,audio/*" onchange="loadKit(this.files)" style="max-width:240px"></label></div><div class="chips" style="align-items:center"><label>Archivos: <input type="file" id="kitFiles" multiple accept=".wav,.mp3,.ogg,audio/*" onchange="loadKit(this.files)" style="max-width:240px"></label><button class="sm" onclick="previewKit()">▶ Escuchar kit</button><button class="sm" onclick="clearKit()">Usar sintetizadores</button></div><div class="chips">${KITV.map(v=>`<span class="tag" style="${S.assign&&S.assign[v]?'outline:1px solid var(--gr)':''}">${KITL[v]}: ${S.assign&&S.assign[v]?S.assign[v]:'synth'}</span>`).join('')}</div></div>`}
+const _vLib=vLib;
+vLib=function(){return _vLib().replace('</h2>','</h2>'+kitCard())};
 sync();list();render();
 </script></body></html>
